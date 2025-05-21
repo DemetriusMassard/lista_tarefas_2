@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lista_tarefas_2/app/data/tasklist_data.dart';
+import 'package:provider/provider.dart';
 
 import '../model/task.dart';
 
@@ -11,7 +13,8 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   final TextEditingController taskController = TextEditingController();
-  final List<Task> _taskList = [];
+  List<Task> _taskList = [];
+
   void _addTask(String taskName) {
     setState(() {
       Task newtask = Task(taskName: taskName);
@@ -20,12 +23,9 @@ class _HomepageState extends State<Homepage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    TaskData taskData = Provider.of<TaskData>(context);
+    _taskList = taskData.taskList;
     return Scaffold(
       appBar: AppBar(
         title: Text("Lista de tarefas"),
@@ -52,6 +52,7 @@ class _HomepageState extends State<Homepage> {
                 ElevatedButton(
                   onPressed: () {
                     _addTask(taskController.text);
+                    taskData.saveFile();
                   },
                   child: Text("Adicionar"),
                 ),
@@ -68,6 +69,7 @@ class _HomepageState extends State<Homepage> {
                     onChanged: (c) {
                       setState(() {
                         _taskList[index].ok = c!;
+                        taskData.saveFile();
                       });
                     },
                     secondary: CircleAvatar(

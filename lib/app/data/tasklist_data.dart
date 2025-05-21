@@ -20,22 +20,17 @@ class TaskData extends ChangeNotifier {
     return file.writeAsString(data);
   }
 
-  Future<String> _readData() async {
+  Future<void> readData() async {
     try {
       final file = await _getFile();
-      return file.readAsString();
+      List<dynamic> data = json.decode(await file.readAsString());
+      taskList = [];
+      for (var task in data) {
+        Task newTask = Task(taskName: task['taskName'], ok: task['ok']);
+        taskList.add(newTask);
+      }
     } catch (e) {
-      return e.toString();
+      print(e.toString());
     }
   }
-
-  // Future<List<Task>> getTaskList() async {
-  //   List<Task> taskList = [];
-  //   List<dynamic> data = json.decode(await _readData());
-
-  //   // for(var task in data){
-  //   //   Task newTask = Task.fromMap(map)
-  //   // }
-  //   return [];
-  // }
 }
